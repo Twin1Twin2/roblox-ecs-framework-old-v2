@@ -1,0 +1,10 @@
+{
+    "name" : "roblox-ecs-framework",
+    "servePort" : 8000,
+    "partitions" : {
+        "src" : {
+            "path" : "./src",
+            "target" : "ServerScriptService.Nevermore.ECS"
+        }
+    }
+}
