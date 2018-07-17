@@ -25,7 +25,7 @@ local ECSFramework = {}
 ECSFramework.Engine = ECSEngine
 ECSFramework.World = ECSWorld
 ECSFramework.Component = ECSComponentDescription
-ECSFramework.System = ECSSystemDescription
+ECSFramework.System = ECSSystem
 
 
 return ECSFramework
