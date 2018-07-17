@@ -154,6 +154,13 @@ function ECSSystem:Update(stepped)
 end
 
 
+function ECSSystem:UpdateSystem(stepped)
+    self:SetLockMode(LOCKMODE_LOCKED)
+    self:Update(stepped)
+    self:SetLockMode(LOCKMODE_OPEN)
+end
+
+
 function ECSSystem:Destroy()
     setmetatable(self, nil)
 end
