@@ -46,7 +46,11 @@ end
 
 
 function ECSEntity:GetNumberOfRegisteredSystems()
-    return #self._RegisteredSystems
+    if (self._RegisteredSystems ~= nil) then
+        return #self._RegisteredSystems
+    end
+    
+    return 0
 end
 
 
@@ -60,16 +64,7 @@ function ECSEntity:GetComponent(componentName)
 end
 
 
-function ECSEntity:AddComponent(componentName, component)
-    assert(type(componentName) == "string")
-    assert(type(component) == "table" and component.ClassName == COMPONENT_CLASSNAME)
-
-    local comp = self._Components[componentName]
-
-    if (comp ~= nil) then
-        self:RemoveComponent(componentName, comp)
-    end
-
+function ECSEntity:_AddComponent(componentName, component)
     self._Components[componentName] = component
 
     if (component.Instance ~= nil) then
@@ -78,11 +73,26 @@ function ECSEntity:AddComponent(componentName, component)
 end
 
 
+function ECSEntity:AddComponent(componentName, component)
+    assert(type(componentName) == "string")
+    assert(type(component) == "table" and component.ClassName == COMPONENT_CLASSNAME)
+
+    local comp = self:GetComponent(componentName)
+
+    if (comp ~= nil) then
+        self:_RemoveComponent(componentName, comp)
+        comp = nil
+    end
+
+    self:_AddComponent(componentName, component)
+end
+
+
 function ECSEntity:_RemoveComponent(componentName, component)
     self._Components[componentName] = nil
 
     if (component.Instance ~= nil) then
-        --self._ChildrenRemoved[component.Instance] = component.Instance
+        self._ChildrenRemoved[component.Instance] = component.Instance
         component.Instance.Parent = nil
     end
 
@@ -90,8 +100,12 @@ function ECSEntity:_RemoveComponent(componentName, component)
 end
 
 
-function ECSEntity:RemoveComponent()
-    
+function ECSEntity:RemoveComponent(componentName)
+    local component = self:GetComponent(componentName)
+
+    if (component ~= nil) then
+        self:_RemoveComponent(componentName, component)
+    end
 end
 
 
@@ -166,7 +180,6 @@ function ECSEntity.new(instance)
 
     assert(typeof(instance) == "Instance")
 
-
     local self = setmetatable({}, ECSEntity)
 
     self.Instance = instance
@@ -175,8 +188,7 @@ function ECSEntity.new(instance)
 
     self._Components = {}
     self._RegisteredSystems = {}
-
-    --[[
+    --
     self._ChildrenRemoved = {}
     self._ChildRemovedConnection = instance.ChildRemoved:Connect(function(child)
         self:_ChildInstanceRemoved(child)

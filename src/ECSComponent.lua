@@ -1,21 +1,28 @@
---taken from RobloxComponentSystem by tiffany352
 
-local function deepCopy(source)
+local Table = require(script.Parent.Table)
+
+local TableContains = Table.Contains
+local AttemptRemovalFromTable = Table.AttemptRemovalFromTable
+local Merge = Table.Merge
+local DeepCopy = Table.DeepCopy
+
+local function AltDeepCopy(source)   --copied from RobloxComponentSystem by tiffany352
 	if typeof(source) == 'table' then
 		local new = {}
 		for key, value in pairs(source) do
-			new[deepCopy(key)] = deepCopy(value)
+			new[AltDeepCopy(key)] = AltDeepCopy(value)
 		end
 		return new
 	end
 	return source
 end
 
-local function merge(to, from)
+local function AltMerge(to, from)   --copied from RobloxComponentSystem by tiffany352
 	for key, value in pairs(from or {}) do
-		to[deepCopy(key)] = deepCopy(value)
+		to[DeepCopy(key)] = DeepCopy(value)
 	end
 end
+
 
 
 local ECSComponent = {
@@ -34,7 +41,14 @@ function ECSComponent:ContainsInstance(instance)
 end
 
 
+function ECSComponent:_Destroy()
+
+end
+
+
 function ECSComponent:Destroy()
+    self:_Destroy()
+    
     if (self.Instance ~= nil) then
         self.Instance:Destroy()
     end
@@ -48,30 +62,25 @@ function ECSComponent.new(componentDesc, data, instance)
     assert(type(data) == "table")
 
     instance = instance or data.Instance
-    assert(instance == nil or typeof(instance) == "Instance")
-
 
     local self = setmetatable({}, ECSComponent)
 
     self._ComponentName = componentDesc.ComponentName
+    self._Destroy = DeepCopy(systemDesc.Destroy)
+    
+    AltMerge(self, componentDesc.Data)
 
     if (instance == nil) then
-        local newInstance = Instance.new("Folder")
-        self.Instance = newInstance
-    else
-        self.Instance = instance
+        instance = componentDesc:CreateInstance(data)
     end
 
-    self.Instance.Name = tostring(self.ComponentName)
-    
+    assert(instance == nil or typeof(instance) == "Instance")
 
-    local newData = deepCopy(componentDesc.Data)
-
-    componentDesc:FromInstance(instance, newData)
+    componentDesc:FromInstance(instance, data)
     componentDesc:Create(data)
 
-    merge(newData, data)
-    merge(self, newData)
+    AltMerge(self, data)
+    self.Instance = instance
 
     return self
 end

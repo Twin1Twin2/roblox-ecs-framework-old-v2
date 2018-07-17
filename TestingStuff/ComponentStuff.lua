@@ -12,6 +12,11 @@ MyComponent.Data = {
 }
 
 
+function MyComponent:CreateInstance()
+    
+end
+
+
 function MyComponent:FromInstance(instance, data)   --called when a component is created with an instance or the data's Instance index ~= nil
     --convert a component from an instance
     --if a component is created with an table that has an Instance attribute, then this will be called first before Create

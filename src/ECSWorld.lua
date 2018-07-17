@@ -1,5 +1,7 @@
 
 local ECSEntity = require(script.Parent.ECSEntity)
+local ECSComponent = require(script.Parent.ECSComponent)
+local ECSSystem = require(script.Parent.ECSSystem)
 
 local Table = require(script.Parent.Table)
 
@@ -7,6 +9,7 @@ local TableContains = Table.Contains
 local AttemptRemovalFromTable = Table.AttemptRemovalFromTable
 
 local COMPONENT_DESC_CLASSNAME = "ECSComponentDescription"
+local SYSTEM_CLASSNAME = "ECSSystem"
 
 local ECSWorld = {
     ClassName = "ECSWorld";
@@ -42,11 +45,16 @@ function ECSWorld:_GetComponentDescription(componentName)
 end
 
 
-function ECSWorld:_CreateComponent(componentName, data)
+function ECSWorld:_CreateComponent(componentName, data, instance)
     local componentDesc = self:_GetComponentDescription(componentName)
-    local newComponent = ECSComponent.new(componentDesc, data)
 
-    return newComponent
+    if (componentDesc ~= nil) then
+        local newComponent = ECSComponent.new(componentDesc, data, instance)
+
+        return newComponent
+    end
+
+    return nil
 end
 
 
@@ -60,9 +68,9 @@ function ECSWorld:RegisterComponent(componentDesc)
     end
 
     assert(type(componentDesc) == "table", "")
-    assert(componentDesc.ClassName == COMPONENT_DESC_CLASSNAME, "ECSWorld :: RegisterComponent() Argument [1] is not a ComponentDesc")
+    assert(componentDesc.ClassName == COMPONENT_DESC_CLASSNAME, "ECSWorld :: RegisterComponent() Argument [1] is not a \"" .. COMPONENT_DESC_CLASSNAME .. "\"!")
 
-    local componentName = componentDesc.Name
+    local componentName = componentDesc.ComponentName
 
     if (self._RegisteredComponents[componentName] ~= nil) then
         warn("ECS World " .. self.Name .. " - Component already registered with the name " .. componentName)
@@ -88,6 +96,54 @@ function ECSWorld:RegisterComponentsFromList(componentDescs)
 end
 
 
+function ECSWorld:RegisterSystem(systemDesc)
+    if (typeof(systemDesc) == "Instance" and systemDesc:IsA("ModuleScript") == true) then
+        local success, message = pcall(function()
+            systemDesc = require(systemDesc)
+        end)
+
+        assert(success == true, message)
+    end
+
+    assert(type(systemDesc) == "table", "")
+    assert(systemDesc.ClassName == SYSTEM_CLASSNAME, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"!")
+
+    local systemName = systemDesc.SystemName
+
+    if (self:GetSystem(systemName) ~= nil) then
+        error("ECS World " .. self.Name .. " - System already registered with the name \"" .. systemName .. "\"!")
+    end
+
+    table.insert(self._Systems, system)
+
+    system:Initialize()
+end
+
+
+function ECSWorld:RegisterSystems(...)
+    local systemDescs = {...}
+
+    self:RegisterSystemsFromList(systemDescs)
+end
+
+
+function ECSWorld:RegisterSystemsFromList(systemDescs)
+    assert(type(systemDescs) == "table", "")
+
+    for _, systemDesc in pairs(systemDescs) do
+        self:RegisterSystem(systemDesc)
+    end
+end
+
+
+function ECSWorld:SetName(newName)
+    assert(type(newName) == "string")
+
+    self.Name = newName
+    self.RootInstance.Name = newName
+end
+
+
 function ECSWorld:EntityComponentsChanged(entity)
     table.insert(self._EntitiesToUpdate, entity)
 end
@@ -100,12 +156,26 @@ function ECSWorld:_AddEntity(entity)
 end
 
 
-function ECSWorld:_RemoveEntity(entity)  --remove from root instance and destroy components
+function ECSWorld:_RemoveEntity(entity)  --remove from root instance and destroy
     if (entity.Instance ~= nil) then
         entity.Instance.Parent = nil
     end
 
     entity:Destroy()
+end
+
+
+function ECSWorld:_AddThisEntity(entity)
+    if (TableContains(self._EntitiesToAdd, entity) == false and TableContains(self.Entities, entity) == false) then
+        table.insert(self._EntitiesToAdd, entity)
+    end
+end
+
+
+function ECSWorld:_RemoveThisEntity(entity)
+    if (TableContains(self._EntitiesToRemove, entity) == false and TableContains(self.Entities, entity) == true) then
+        table.insert(self._EntitiesToRemove, entity)
+    end
 end
 
 
@@ -127,13 +197,18 @@ function ECSWorld:CreateEntity(entityData, altEntityData)
 
     local entity = ECSEntity.new(instance)
 
-    ECSWorld.AddComponentsToEntity(self, entity, componentList)
+    for componentName, componentData in pairs(componentList) do
+        ECSWorld._AddComponentToEntity(entity, componentName, componentData)
+    end
+
+    ECSWorld._AddThisEntity(self, entity)
 end
 
 
 function ECSWorld:RemoveEntity(entity)
-    --find entity
-    --remove entity
+    assert(entity ~= nil and type(entity) == "table" and entity.ClassName == "ECSEntity")
+    
+    ECSWorld._RemoveThisEntity(self, entity)
 end
 
 
@@ -142,6 +217,13 @@ function ECSWorld:_AddComponentToEntity(entity, componentName, componentData)
 
     local newComponent = self:_CreateComponent(componentName, componentData)
     entity:AddComponent(componentName, newComponent)
+end
+
+
+function ECSWorld:_RemoveComponentFromEntity(entity, componentName)
+    assert(type(componentName) == "string")
+
+    entity:RemoveComponent(componentName, newComponent)
 end
 
 
@@ -158,6 +240,12 @@ end
 
 
 function ECSWorld:RemoveComponentsFromEntity(entity, componentList)
+    assert(entity ~= nil and type(entity) == "table" and entity.ClassName == "ECSEntity")
+    assert(componentList ~= nil and type(componentList) == "table")
+
+    for componentName, componentData in pairs(componentList) do
+        ECSWorld._RemoveComponentFromEntity(entity, componentName)
+    end
 
     self:EntityComponentsChanged(entity)
 end
@@ -267,7 +355,6 @@ function ECSWorld.new(name, rootInstance)
     end
 
     assert(typeof(rootInstance) == "Instance")
-    rootInstance.Name = name
 
     local self = setmetatable({}, ECSWorld)
 
@@ -286,6 +373,7 @@ function ECSWorld.new(name, rootInstance)
 
     self._Systems = {}
 
+    self:SetName(name)
 
     return self
 end

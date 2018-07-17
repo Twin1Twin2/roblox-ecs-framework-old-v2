@@ -4,7 +4,7 @@ local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Never
 local ECSFramework = require("ECSFramework")
 
 
-local MySystem = ECSFramework.System:extend("MySystem")
+local MySystem = ECSFramework.System:Extend("MySystem")
 
 MySystem.Components = {
     "AComponent";
