@@ -193,6 +193,19 @@ function ECSWorld:CreateEntity(entityData, altEntityData)
         componentList = entityData
     elseif (type(altEntityData) == "table") then
         componentList = altEntityData
+    else
+        componentList = {}
+    end
+
+    if (instance ~= nil) then
+        for _, child in pairs(instance:GetChildren()) do
+            local componentName = child.Name
+            local componentData = {
+                Instance = child;
+            }
+
+            componentList[componentName] = componentData
+        end
     end
 
     local entity = ECSEntity.new(instance)
@@ -216,7 +229,10 @@ function ECSWorld:_AddComponentToEntity(entity, componentName, componentData)
     assert(type(componentName) == "string" and type(componentData) == "table")
 
     local newComponent = self:_CreateComponent(componentName, componentData)
-    entity:AddComponent(componentName, newComponent)
+    
+    if (newComponent ~= nil) then
+        entity:AddComponent(componentName, newComponent)
+    end
 end
 
 
