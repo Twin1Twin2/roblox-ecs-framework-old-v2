@@ -11,6 +11,35 @@ local ECSEngineConfiguration = {
 ECSEngineConfiguration.__index = ECSEngineConfiguration
 
 
+function ECSEngineConfiguration:AddComponent(component)
+    assert(type(component) == "table" and component._IsComponentDescription == true)
+
+    if (TableContains(self.Components, component) == true) then
+        return
+    end
+
+    table.insert(self.Components, component)
+end
+
+
+function ECSEngineConfiguration:AddComponents(...)
+    local componentList = {...}
+
+    if (#componentList == 1 and type(componentList[1]) == "table" and componentList[1]._IsComponentDescription == nil) then
+        componentList = componentList[1]
+    end
+
+    self:AddComponentsFromList(componentList)
+end
+
+
+function ECSEngineConfiguration:AddComponentsFromList(componentList)
+    for _, component in pairs(componentList) do
+        self:AddComponent(component)
+    end
+end
+
+
 function ECSEngineConfiguration:AddSystem(system)
     assert(type(system) == "table" and system._IsSystem == true)
 
@@ -40,6 +69,8 @@ function ECSEngineConfiguration:AddSystemsFromList(systemList)
         if (type(system) == "number" and type(index) == "table") then
             updateType = system
             system = index
+        elseif (type(system) == "table" and type(system.SystemUpdateType) == "number") then
+            updateType = system.SystemUpdateType
         end
 
         if (updateType == 0) then
