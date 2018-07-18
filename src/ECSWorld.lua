@@ -393,3 +393,6 @@ function ECSWorld.new(name, rootInstance)
 
     return self
 end
+
+
+return ECSWorld
