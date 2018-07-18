@@ -229,7 +229,7 @@ function ECSWorld:_AddComponentToEntity(entity, componentName, componentData)
     assert(type(componentName) == "string" and type(componentData) == "table")
 
     local newComponent = self:_CreateComponent(componentName, componentData)
-    
+
     if (newComponent ~= nil) then
         entity:AddComponent(componentName, newComponent)
     end
@@ -363,7 +363,7 @@ end
 
 
 function ECSWorld.new(name, rootInstance)
-    name = name or "ECS_WORLD"
+    name = name or "WORLD"
     assert(type(name) == "string")
 
     if (rootInstance == nil) then
