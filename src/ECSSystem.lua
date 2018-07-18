@@ -174,17 +174,14 @@ function ECSSystem:Extend(name)
     assert(type(name) == "string")
 
     local this = {}
-
-    setmetatable(this, ECSSystem)
-    this.__index = this
-
+    
     this.SystemName = name
 
     function this.new()
-        local t = setmetatable(ECSSystem.new(name), this)
+        local t = ECSSystem.new(name)
 
         for index, value in pairs(this) do
-            if (INDEX_BLACKLIST[index] ~= nil) then
+            if (INDEX_BLACKLIST[index] == nil) then
                 t[index] = DeepCopy(value)
             end
         end
