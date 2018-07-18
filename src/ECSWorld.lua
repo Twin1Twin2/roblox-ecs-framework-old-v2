@@ -99,7 +99,7 @@ end
 function ECSWorld:RegisterSystem(system)
     if (typeof(system) == "Instance" and system:IsA("ModuleScript") == true) then
         local success, message = pcall(function()
-            systemDesc = require(system)
+            system = require(system)
         end)
 
         assert(success == true, message)
@@ -108,7 +108,7 @@ function ECSWorld:RegisterSystem(system)
     assert(type(system) == "table", "")
     assert(system._IsSystem == true, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"! ClassName = " .. tostring(system.ClassName))
 
-    local systemName = systemDesc.SystemName
+    local systemName = system.SystemName
 
     if (self:GetSystem(systemName) ~= nil) then
         error("ECS World " .. self.Name .. " - System already registered with the name \"" .. systemName .. "\"!")
