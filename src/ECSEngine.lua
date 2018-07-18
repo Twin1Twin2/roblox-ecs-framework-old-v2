@@ -85,8 +85,8 @@ function ECSEngine.new(engineConfiguration)
     if (engineConfiguration ~= nil and engineConfiguration.ClassName == "ECSEngineConfiguration") then
         self.World:SetName(engineConfiguration.WorldName)
 
-        self.World:RegisterComponents(engineConfiguration.Components)
-        self.World:RegisterSystems(engineConfiguration.Systems)
+        self.World:RegisterComponentsFromList(engineConfiguration.Components)
+        self.World:RegisterSystemsFromList(engineConfiguration.Systems)
 
         self._RenderSteppedUpdateSystems = engineConfiguration.RenderSteppedSystems
         self._SteppedUpdateSystems = engineConfiguration.SteppedSystems
