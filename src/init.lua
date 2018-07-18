@@ -18,7 +18,6 @@ local ECSEntity = require(script.ECSEntity)
 local ECSComponent = require(script.ECSComponent)
 local ECSComponentDescription = require(script.ECSComponentDescription)
 local ECSSystem = require(script.ECSSystem)
-local ECSSystemDescription = require(script.ECSSystemDescription)
 
 
 local ECSFramework = {}
