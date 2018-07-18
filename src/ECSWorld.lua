@@ -166,14 +166,14 @@ end
 
 
 function ECSWorld:_AddThisEntity(entity)
-    if (TableContains(self._EntitiesToAdd, entity) == false and TableContains(self.Entities, entity) == false) then
+    if (TableContains(self._EntitiesToAdd, entity) == false and TableContains(self._Entities, entity) == false) then
         table.insert(self._EntitiesToAdd, entity)
     end
 end
 
 
 function ECSWorld:_RemoveThisEntity(entity)
-    if (TableContains(self._EntitiesToRemove, entity) == false and TableContains(self.Entities, entity) == true) then
+    if (TableContains(self._EntitiesToRemove, entity) == false and TableContains(self._Entities, entity) == true) then
         table.insert(self._EntitiesToRemove, entity)
     end
 end
