@@ -1,7 +1,7 @@
 
 local ECSWorld = require(script.Parent.ECSWorld)
 local ECSSystem = require(script.Parent.ECSSystem)
-
+local ECSEngineConfiguration = requie(script.Parent.ECSEngineConfiguration)
 
 local RunService = game:GetService("RunService")
 
@@ -17,21 +17,7 @@ local LOCKMODE_LOCKED = ECSSystem.LOCKMODE_LOCKED
 local LOCKMODE_ERROR = ECSSystem.LOCKMODE_ERROR
 
 
-function ECSEngine:SetWorld(newWorld)
-    if (self._World ~= nil) then
-        self._World.RootInstance.Parent = nil
-    end
-
-    self._World = newWorld
-    self._World.RootInstance.Parent = workspace
-end
-
-
 function ECSEngine:Update(stepped)
-    if (self._World == nil) then
-        return
-    end
-
     self._World:Update()
 end
 
@@ -46,9 +32,7 @@ end
 
 
 function ECSEngine:SteppedUpdate(t, stepped)
-    if (self._World ~= nil) then
-        self.T = t  --idk
-    end
+    self.World.T = t  --idk
 
     for _, system in pairs(self._SteppedUpdateSystems) do
         system:SetLockMode(LOCKMODE_ERROR)
@@ -72,13 +56,10 @@ function ECSEngine:Destroy()
 end
 
 
-function ECSEngine.new(world)
-    world = world or ECSWorld.new()
-
-
+function ECSEngine.new(engineConfiguration)
     local self = setmetatable({}, ECSEngine)
 
-    self._World = nil
+    self._World = ECSWorld.new()
     
     self._RenderSteppedUpdateSystems = {}
     self._SteppedUpdateSystems = {}
@@ -99,6 +80,18 @@ function ECSEngine.new(world)
     self._HeartbeatUpdateConnection = RunService.Heartbeat:Connect(function(stepped)
         self:HeartbeatUpdate(stepped)
     end)
+
+
+    if (engineConfiguration ~= nil and engineConfiguration.ClassName == "ECSEngineConfiguration") then
+        self._World:SetName(engineConfiguration.WorldName)
+
+        self._World:RegisterComponents(engineConfiguration.Components)
+        self._World:RegisterSystems(engineConfiguration.Systems)
+
+        self._RenderSteppedUpdateSystems = engineConfiguration.RenderSteppedSystems
+        self._SteppedUpdateSystems = engineConfiguration.SteppedSystems
+        self._HeartbeatUpdateSystems = engineConfiguration.HeartbeatSystems
+    end
 
 
     return self

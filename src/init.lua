@@ -12,6 +12,7 @@
 
 
 local ECSEngine = require(script.ECSEngine)
+local ECSEngineConfiguration = require(script.ECSEngineConfiguration)
 local ECSWorld = require(script.ECSWorld)
 local ECSEntity = require(script.ECSEntity)
 local ECSComponent = require(script.ECSComponent)
@@ -23,6 +24,7 @@ local ECSSystemDescription = require(script.ECSSystemDescription)
 local ECSFramework = {}
 
 ECSFramework.Engine = ECSEngine
+ECSFramework.EngineConfiguration = ECSEngineConfiguration
 ECSFramework.World = ECSWorld
 ECSFramework.Component = ECSComponentDescription
 ECSFramework.System = ECSSystem
