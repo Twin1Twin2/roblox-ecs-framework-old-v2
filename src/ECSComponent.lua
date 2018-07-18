@@ -52,6 +52,8 @@ function ECSComponent:Destroy()
     if (self.Instance ~= nil) then
         self.Instance:Destroy()
     end
+
+    setmetatable(self, nil)
 end
 
 
