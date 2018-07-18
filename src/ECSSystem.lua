@@ -191,6 +191,8 @@ function ECSSystem:Extend(name)
 
         return t
     end
+
+    return this
 end
 
 
