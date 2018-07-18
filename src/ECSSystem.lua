@@ -34,6 +34,10 @@ local ECSSystem = {
 
 ECSSystem.__index = ECSSystem
 
+local LOCKMODE_OPEN = ECSSystem.LOCKMODE_OPEN
+local LOCKMODE_LOCKED = ECSSystem.LOCKMODE_LOCKED
+local LOCKMODE_ERROR = ECSSystem.LOCKMODE_ERROR
+
 --
 local INDEX_BLACKLIST = {
     ClassName = true;

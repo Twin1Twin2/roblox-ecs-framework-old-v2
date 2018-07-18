@@ -96,17 +96,17 @@ function ECSWorld:RegisterComponentsFromList(componentDescs)
 end
 
 
-function ECSWorld:RegisterSystem(systemDesc)
-    if (typeof(systemDesc) == "Instance" and systemDesc:IsA("ModuleScript") == true) then
+function ECSWorld:RegisterSystem(system)
+    if (typeof(system) == "Instance" and system:IsA("ModuleScript") == true) then
         local success, message = pcall(function()
-            systemDesc = require(systemDesc)
+            systemDesc = require(system)
         end)
 
         assert(success == true, message)
     end
 
-    assert(type(systemDesc) == "table", "")
-    assert(systemDesc.ClassName == SYSTEM_CLASSNAME, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"!")
+    assert(type(system) == "table", "")
+    assert(system.ClassName == SYSTEM_CLASSNAME, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"!")
 
     local systemName = systemDesc.SystemName
 
@@ -239,7 +239,7 @@ end
 function ECSWorld:_RemoveComponentFromEntity(entity, componentName)
     assert(type(componentName) == "string")
 
-    entity:RemoveComponent(componentName, newComponent)
+    entity:RemoveComponent(componentName)
 end
 
 

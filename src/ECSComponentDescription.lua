@@ -34,7 +34,7 @@ function ECSComponentDescription:Extend(name)
 end
 
 
-function ECSComponentDescription.new()
+function ECSComponentDescription.new(name)
     assert(type(name) == "string")
 
     local self = setmetatable({}, ECSComponentDescription)

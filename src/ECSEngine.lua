@@ -1,7 +1,7 @@
 
 local ECSWorld = require(script.Parent.ECSWorld)
 local ECSSystem = require(script.Parent.ECSSystem)
-local ECSEngineConfiguration = requie(script.Parent.ECSEngineConfiguration)
+local ECSEngineConfiguration = require(script.Parent.ECSEngineConfiguration)
 
 local RunService = game:GetService("RunService")
 

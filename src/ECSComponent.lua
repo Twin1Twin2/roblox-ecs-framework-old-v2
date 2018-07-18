@@ -68,7 +68,7 @@ function ECSComponent.new(componentDesc, data, instance)
     local self = setmetatable({}, ECSComponent)
 
     self._ComponentName = componentDesc.ComponentName
-    self._Destroy = DeepCopy(systemDesc.Destroy)
+    self._Destroy = DeepCopy(componentDesc.Destroy)
     
     AltMerge(self, componentDesc.Data)
 
