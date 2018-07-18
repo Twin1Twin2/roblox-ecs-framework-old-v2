@@ -93,6 +93,7 @@ function ECSEngine.new(engineConfiguration)
         self._HeartbeatUpdateSystems = engineConfiguration.HeartbeatSystems
     end
 
+    self._World.RootInstance.Parent = workspace
 
     return self
 end
