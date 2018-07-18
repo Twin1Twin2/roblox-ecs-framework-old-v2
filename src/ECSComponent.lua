@@ -67,6 +67,8 @@ function ECSComponent.new(componentDesc, data, instance)
 
     local self = setmetatable({}, ECSComponent)
 
+    self._IsComponent = true
+
     self._ComponentName = componentDesc.ComponentName
     self._Destroy = DeepCopy(componentDesc.Destroy)
     

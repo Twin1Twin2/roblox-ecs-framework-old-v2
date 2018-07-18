@@ -68,7 +68,7 @@ function ECSWorld:RegisterComponent(componentDesc)
     end
 
     assert(type(componentDesc) == "table", "")
-    assert(componentDesc.ClassName == COMPONENT_DESC_CLASSNAME, "ECSWorld :: RegisterComponent() Argument [1] is not a \"" .. COMPONENT_DESC_CLASSNAME .. "\"!")
+    assert(componentDesc._IsComponentDescription == true, "ECSWorld :: RegisterComponent() Argument [1] is not a \"" .. COMPONENT_DESC_CLASSNAME .. "\"!")
 
     local componentName = componentDesc.ComponentName
 
@@ -106,7 +106,7 @@ function ECSWorld:RegisterSystem(system)
     end
 
     assert(type(system) == "table", "")
-    assert(system.ClassName == SYSTEM_CLASSNAME, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"!")
+    assert(system._IsSystem == true, "ECSWorld :: RegisterSystem() Argument [1] is not a \"" .. SYSTEM_CLASSNAME .. "\"!")
 
     local systemName = systemDesc.SystemName
 

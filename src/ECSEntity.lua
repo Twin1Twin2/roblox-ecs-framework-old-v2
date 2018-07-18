@@ -4,8 +4,6 @@ local Table = require(script.Parent.Table)
 local TableContains = Table.Contains
 local AttemptRemovalFromTable = Table.AttemptRemovalFromTable
 
-local COMPONENT_CLASSNAME = "ECSComponent"
-
 
 local ECSEntity = {
     ClassName = "ECSEntity";
@@ -75,7 +73,7 @@ end
 
 function ECSEntity:AddComponent(componentName, component)
     assert(type(componentName) == "string")
-    assert(type(component) == "table" and component.ClassName == COMPONENT_CLASSNAME)
+    assert(type(component) == "table" and component._IsComponent == true)
 
     local comp = self:GetComponent(componentName)
 
