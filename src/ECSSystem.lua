@@ -195,6 +195,8 @@ function ECSSystem.new(name, world)
 
     local self = setmetatable({}, ECSSystem)
 
+    self._IsSystem = true
+
     self.SystemName = name
 
     self.LockMode = LOCKMODE_OPEN
