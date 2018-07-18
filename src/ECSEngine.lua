@@ -18,7 +18,7 @@ local LOCKMODE_ERROR = ECSSystem.LOCKMODE_ERROR
 
 
 function ECSEngine:Update(stepped)
-    self._World:Update()
+    self.World:Update()
 end
 
 
@@ -59,7 +59,7 @@ end
 function ECSEngine.new(engineConfiguration)
     local self = setmetatable({}, ECSEngine)
 
-    self._World = ECSWorld.new()
+    self.World = ECSWorld.new()
     
     self._RenderSteppedUpdateSystems = {}
     self._SteppedUpdateSystems = {}
@@ -83,17 +83,17 @@ function ECSEngine.new(engineConfiguration)
 
 
     if (engineConfiguration ~= nil and engineConfiguration.ClassName == "ECSEngineConfiguration") then
-        self._World:SetName(engineConfiguration.WorldName)
+        self.World:SetName(engineConfiguration.WorldName)
 
-        self._World:RegisterComponents(engineConfiguration.Components)
-        self._World:RegisterSystems(engineConfiguration.Systems)
+        self.World:RegisterComponents(engineConfiguration.Components)
+        self.World:RegisterSystems(engineConfiguration.Systems)
 
         self._RenderSteppedUpdateSystems = engineConfiguration.RenderSteppedSystems
         self._SteppedUpdateSystems = engineConfiguration.SteppedSystems
         self._HeartbeatUpdateSystems = engineConfiguration.HeartbeatSystems
     end
 
-    self._World.RootInstance.Parent = workspace
+    self.World.RootInstance.Parent = workspace
 
     return self
 end
