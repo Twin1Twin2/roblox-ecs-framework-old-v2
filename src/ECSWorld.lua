@@ -211,17 +211,17 @@ function ECSWorld:CreateEntity(entityData, altEntityData)
     local entity = ECSEntity.new(instance)
 
     for componentName, componentData in pairs(componentList) do
-        self:_AddComponentToEntity(self, entity, componentName, componentData)
+        self:_AddComponentToEntity(entity, componentName, componentData)
     end
 
-    self:_AddThisEntity(self, entity)
+    self:_AddThisEntity(entity)
 end
 
 
 function ECSWorld:RemoveEntity(entity)
     assert(entity ~= nil and type(entity) == "table" and entity.ClassName == "ECSEntity")
     
-    self:_RemoveThisEntity(self, entity)
+    self:_RemoveThisEntity(entity)
 end
 
 
