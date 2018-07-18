@@ -211,17 +211,17 @@ function ECSWorld:CreateEntity(entityData, altEntityData)
     local entity = ECSEntity.new(instance)
 
     for componentName, componentData in pairs(componentList) do
-        ECSWorld._AddComponentToEntity(entity, componentName, componentData)
+        self:_AddComponentToEntity(self, entity, componentName, componentData)
     end
 
-    ECSWorld._AddThisEntity(self, entity)
+    self:_AddThisEntity(self, entity)
 end
 
 
 function ECSWorld:RemoveEntity(entity)
     assert(entity ~= nil and type(entity) == "table" and entity.ClassName == "ECSEntity")
     
-    ECSWorld._RemoveThisEntity(self, entity)
+    self:_RemoveThisEntity(self, entity)
 end
 
 
@@ -248,7 +248,7 @@ function ECSWorld:AddComponentsToEntity(entity, componentList)
     assert(componentList ~= nil and type(componentList) == "table")
 
     for componentName, componentData in pairs(componentList) do
-        ECSWorld._AddComponentToEntity(entity, componentName, componentData)
+        self:_AddComponentToEntity(entity, componentName, componentData)
     end
 
     self:EntityComponentsChanged(entity)
@@ -260,7 +260,7 @@ function ECSWorld:RemoveComponentsFromEntity(entity, componentList)
     assert(componentList ~= nil and type(componentList) == "table")
 
     for componentName, componentData in pairs(componentList) do
-        ECSWorld._RemoveComponentFromEntity(entity, componentName)
+        self:_RemoveComponentFromEntity(entity, componentName)
     end
 
     self:EntityComponentsChanged(entity)
